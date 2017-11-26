@@ -322,6 +322,42 @@ class TextInputGraphicTest(GraphicUnitTest):
 
             ti._key_up((None, None, 'ctrl_L', 1), repeat=False)
 
+    # two similar tests, because it's easier to reset
+    # to an initial state with a new method
+    def test_alt_line_shift_up(self):
+        text = 'these\nare\nfour\nlines'
+        ti = TextInput(multiline=True, text=text)
+        ti.focus = True
+
+        self.render(ti)
+        self.assertTrue(ti.focus)
+
+        # assert cursor is on the last line
+        self.assertEqual(ti.cursor[1], 3)
+
+        ti._key_down((None, None, "alt_L", 1), repeat=False)
+        ti._key_down((None, None, "cursor_up", 1), repeat=False)
+
+        self.assertEqual(ti.text, 'these\nare\nlines\nfour')
+
+    def test_alt_line_shift_down(self):
+        text = 'these\nare\nfour\nlines'
+        ti = TextInput(multiline=True, text=text)
+        ti.focus = True
+
+        self.render(ti)
+        self.assertTrue(ti.focus)
+
+        # move cursor to first line and assert it's there
+        for _ in range(4):
+            ti._key_down((None, None, "cursor_up", 1), repeat=False)
+        self.assertEqual(ti.cursor[1], 0)
+
+        ti._key_down((None, None, "alt_L", 1), repeat=False)
+        ti._key_down((None, None, "cursor_down", 1), repeat=False)
+
+        self.assertEqual(ti.text, 'are\nthese\nfour\nlines')
+
 
 if __name__ == '__main__':
     import unittest
